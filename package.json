@@ -5,14 +5,15 @@
   "homepage": "https://zachary-shah-27.github.io/k_partite_graph_letter_boxed",
   "scripts": {
     "start": "expo start",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "predeploy": "expo build:web",
+    "deploy": "gh-pages -d web-build"
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
     "an-array-of-english-words": "^2.0.0",
     "expo": "~53.0.9",
     "expo-status-bar": "~2.2.3",
-    "gh-pages": "^6.3.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
@@ -20,7 +21,8 @@
     "react-native-web": "^0.20.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "gh-pages": "^6.3.0"
   },
   "private": true
 }
