@@ -46,3 +46,37 @@ To run this project on your local machine, you need to have [Node.js](https://no
     ```bash
     npm install
     npm run web```
+
+
+## Combinatorics (for fun!)
+
+This game is built on the idea of a **K-partite graph**, where each edge connects letters from different “sides” (really, partitions). That leads to some interesting combinatorics when thinking about possible words.
+
+Of course, there are technically an infinite number of strings one could create for any `k` partitions and `n` letters per side, so let's constrain the size of a word to 3 letters.
+
+### Total Possible 3-Letter Combinations
+
+Assuming:
+
+- `k` sides (for 2 < k < 14 as constrained by the alphabet)
+- `n` letters per side (for 9 > n > 1 as constrained by the alphabet)
+- Each letter in a word must come from a **different partition**
+- **Order matters** (think: `TOP` ≠ `POT`)
+- For simplicity, let's say all combinations are considered valid (removes the added hassle of having to filter this list for valid english words)
+
+Then the number of all possible 3-letter words is:
+
+```
+Total = k × (k - 1) × (k - 2) × n³
+```
+
+For example, if `k = 6` and `n = 3`:
+
+```
+Total = 6 × 5 × 4 × 3³ = 6 × 5 × 4 × 27 = 3,240
+```
+
+That's over 3,000 possible 3-letter combinations just from one puzzle!
+
+This combinatorial structure is what makes the game constantly replayable. No wonder the NYT can update the puzzle daily and never run out of combinations!
+
