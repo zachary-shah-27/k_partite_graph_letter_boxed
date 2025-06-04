@@ -35,6 +35,8 @@ import wordList from 'an-array-of-english-words'; // comprehensive package of co
 * See a few examples below (comment out the ones NOT in use)
 */
 
+// Try to solve in 9 or fewer!
+/*
 const puzzleData = {
   k: 6,
   n: 3,
@@ -47,8 +49,26 @@ const puzzleData = {
     ['M', 'P', 'H'],   // Side 5
   ],
 };
+*/
+
+// Try to solve in 4 or fewer!
+const puzzleData = {
+  k: 8,
+  n: 2,
+  sides: [
+    ['A', 'T'],   // Side 0
+    ['S', 'N'],   // Side 1
+    ['R', 'E'],   // Side 2
+    ['D', 'L'],   // Side 3
+    ['O', 'P'],   // Side 4
+    ['I', 'M'],   // Side 5
+    ['C', 'H'],   // Side 6
+    ['G', 'U'],   // Side 7
+  ],
+};
 
 
+// Try to solve in 6 or fewer!
 /*
 const puzzleData = {
   k: 4,
@@ -62,6 +82,7 @@ const puzzleData = {
 };
 */
 
+// Try to solve in 5 or fewer!
 /*
 const puzzleData = {
   k: 3,
