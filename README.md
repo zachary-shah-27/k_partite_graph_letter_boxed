@@ -40,12 +40,14 @@ To run this project on your local machine, you need to have [Node.js](https://no
 
    ```bash
    git clone https://github.com/zachary-shah-27/k_partite_graph_letter_boxed.git
-   cd k_partite_graph_letter_boxed```
+   cd k_partite_graph_letter_boxed
+   ```
 2. **Install packages and run**
 
     ```bash
     npm install
-    npm run web```
+    npm run web
+    ```
 
 
 ## Combinatorics (for fun!)
