@@ -62,23 +62,24 @@ Assuming:
 
 - `k` sides (for 2 < k < 14 as constrained by the alphabet)
 - `n` letters per side (for 9 > n > 1 as constrained by the alphabet)
-- Each letter in a word must come from a **different partition**
+- Each letter in a word must come from a **different partition** than the previous letter
+- We can revisit a partition after forming an edge to another partition
 - **Order matters** (think: `TOP` ≠ `POT`)
 - For simplicity, let's say all combinations are considered valid (removes the added hassle of having to filter this list for valid english words)
 
 Then the number of all possible 3-letter words is:
 
 ```
-Total = k × (k - 1) × (k - 2) × n³
+Total = k × (k - 1) × (k - 1) × n³
 ```
 
 For example, if `k = 6` and `n = 3`:
 
 ```
-Total = 6 × 5 × 4 × 3³ = 6 × 5 × 4 × 27 = 3,240
+Total = 6 × 5 × 5 × 3³ = 6 × 5 × 5 × 27 = 4,050
 ```
 
-That's over 3,000 possible 3-letter combinations just from one puzzle!
+That's over 4,000 possible 3-letter combinations just from one puzzle!
 
 This combinatorial structure is what makes the game constantly replayable. No wonder the NYT can update the puzzle daily and never run out of combinations!
 
