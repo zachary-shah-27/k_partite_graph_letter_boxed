@@ -2,11 +2,12 @@
   "name": "kpartite-puzzle",
   "version": "1.0.0",
   "main": "index.js",
-  "homepage": "https://zachary-shah-27.github.io/<your-repo-name>",
+  "homepage": "https://zachary-shah-27.github.io/k_partite_graph_letter_boxed",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "web-build": "npx expo export --platform web",
+    "predeploy": "npm run web-build",
+    "deploy": "gh-pages -d dist",
     "web": "expo start --web"
   },
   "dependencies": {
