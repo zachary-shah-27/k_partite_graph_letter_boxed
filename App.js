@@ -1,3 +1,15 @@
+/*
+* Zachary Shah
+* Cosc 30
+* K-Partite Recreation of Letter Boxed
+* June 2025
+* 
+* Created for Cosc 30 as an extra credit assignment
+* For instructions to run, see README
+* Implementation described through in-line comments of this file, App.js
+* No assumptions, game is made from my own design, not following a spec
+* For questions and trouble-shooting, contact me directly
+*/
 import React, { useState } from 'react';
 import {
   View,
@@ -8,11 +20,20 @@ import {
   Pressable,
   Dimensions,
 } from 'react-native';
-import Svg, { Line, Polygon } from 'react-native-svg';
-import wordList from 'an-array-of-english-words';
+import Svg, { Line, Polygon } from 'react-native-svg'; // for shape of graph and visualising edges
+import wordList from 'an-array-of-english-words'; // comprehensive package of common words
 
 
-
+/* 
+* An example of various puzzles
+* 
+* It is important to note that not all combinations of 
+* k, n, and choice of letters produce a solvable puzzle.
+* The real NYT daily puzzle is actually maintained by an editor,
+* and designed to always be solvable in 2 words.
+* Thus, It makes the most logical sense for me to construct my own puzzles.
+* See a few examples below (comment out the ones NOT in use)
+*/
 
 const puzzleData = {
   k: 6,
@@ -33,10 +54,10 @@ const puzzleData = {
   k: 4,
   n: 3,
   sides: [
-    ['G', 'A', 'T'],  // 0
-    ['L', 'E', 'F'],  // 1
-    ['I', 'N', 'D'],  // 2
-    ['R', 'O', 'S'],  // 3
+    ['G', 'A', 'T'],  // Side 0
+    ['L', 'E', 'F'],  // Side 1
+    ['I', 'N', 'D'],  // Side 2
+    ['R', 'O', 'S'],  // Side 3
   ],
 };
 */
@@ -55,6 +76,7 @@ const puzzleData = {
 
 
 export default function App() {
+  // various use states to store local save data
   const [statusMessage, setStatusMessage] = useState('');
   const [currentWord, setCurrentWord] = useState([]);
   const [usedSides, setUsedSides] = useState([]);
@@ -63,28 +85,28 @@ export default function App() {
   const [wordsAcceptedCount, setWordsAcceptedCount] = useState(0);
   const [completedPaths, setCompletedPaths] = useState([]);
 
-
-
-
+  // get window size to properly display game
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
-  // Layout: Left and Right panel widths
+  // create a division between left side (word entry) and right side (graph)
   const leftWidth = windowWidth * 0.4;
   const rightWidth = windowWidth * 0.6;
 
-  // Polygon center inside the right panel (coordinates relative to right panel)
+  // Find center of right side to display graph
   const centerX = rightWidth / 2;
   const centerY = windowHeight / 2;
 
-  // Radius to fit polygon nicely inside right panel with margin
+  // Calculate the maximum radius to fit graph within screen
   const radius = Math.min(rightWidth, windowHeight) / 2 - 40;
 
   const letterSize = 40;
 
-  // Handle letter press: prevent choosing letters from same side consecutively
+  // handler for letter presses
   const handleLetterPress = (letter, sideIndex, letterIndex) => {
-    if (
+    if ( 
+      // if a word has already been submitted and accepted, 
+      // this ensures the next word starts with the trailing word's last character
       currentWord.length === 0 && 
       lastAcceptedLastLetter !== null && 
       letter.toLowerCase() !== lastAcceptedLastLetter
@@ -95,6 +117,8 @@ export default function App() {
       return;
     }
   
+    // check if the selected word comes from the same partition of the graph
+    // this validates our K-Partite configuration!
     if (usedSides.length === 0 || usedSides[usedSides.length - 1].sideIndex !== sideIndex) {
       setCurrentWord([...currentWord, letter]);
       setUsedSides([...usedSides, { sideIndex, letterIndex }]);
@@ -105,36 +129,46 @@ export default function App() {
   };
   
 
+  // for clear button
   const handleClear = () => {
     setCurrentWord([]);
     setUsedSides([]);
   };
 
+  // for word submission, runs its own validation
   const handleSubmit = () => {
+    // normalize submitted word for ease
     const word = currentWord.join('').toLowerCase();
   
+    // a word must be longer than 2 characters, as per NYT rules
     if (word.length < 3) {
       setStatusMessage("Word must be at least 3 letters.");
       return;
     }
   
+    // check if submitted word included in imported word list
     if (!wordList.includes(word)) {
       setStatusMessage(`"${word}" is not in the dictionary.`);
+      // clear if word is invalid
       handleClear();
       return;
     }
   
+    // passing the 2 above checks, our word is valid!
+
+    // store used letters in submitted word, and add 1 to the count of total words
     const newUsedLetters = [...usedLetters, ...usedSides];
     setUsedLetters(newUsedLetters);
     setWordsAcceptedCount(wordsAcceptedCount + 1);
 
+    // store path of letters to visualize graph
     setCompletedPaths([
       ...completedPaths,
-      [...usedSides], // Save the path of this word
+      [...usedSides],
     ]);
     
   
-    // Check if all letters are used
+    // check for win state, if all letters are used
     const totalLetters = puzzleData.k * puzzleData.n;
     const uniqueUsedLettersCount = new Set(
       newUsedLetters.map(
@@ -142,20 +176,24 @@ export default function App() {
       )
     ).size;
   
+    // if we meet win state, issue a status message and display total count,
+    // else confirm a word was accepted
     if (uniqueUsedLettersCount === totalLetters) {
       setStatusMessage(`You won! All letters used in ${wordsAcceptedCount + 1} words!`);
     } else {
       setStatusMessage(`"${word}" accepted!`);
     }
   
+    // store last letter of accepted word in use state
     setLastAcceptedLastLetter(word[word.length - 1]);
+    // clear for next word
     handleClear();
   };
   
   
   
 
-  // Calculate polygon vertices in right panel coordinate space
+  // calculate polygon vertices according to right panel coordinate space
   const angleStep = (2 * Math.PI) / puzzleData.k;
   const vertices = [];
   for (let i = 0; i < puzzleData.k; i++) {
@@ -165,10 +203,10 @@ export default function App() {
     vertices.push({ x, y });
   }
 
-  // Convert vertices to string points for SVG Polygon
+  // convert vertices to string points for react SVG Polygon
   const polygonPoints = vertices.map(v => `${v.x},${v.y}`).join(' ');
 
-  // Calculate letters positioned evenly on polygon edges
+  // store positions of letters to be distributed evenly on polygon edges
   const letters = [];
   for (let sideIndex = 0; sideIndex < puzzleData.k; sideIndex++) {
     const start = vertices[sideIndex];
@@ -179,7 +217,7 @@ export default function App() {
     const edgeVecY = end.y - start.y;
 
     const maxIndex = puzzleData.n - 1;
-    const margin = 0.12; // margin from edge ends
+    const margin = 0.12; // margin from edge ends, acts as buffer so letters do not overlap
 
     for (let letterIndex = 0; letterIndex < puzzleData.n; letterIndex++) {
       const t = maxIndex === 0
@@ -199,10 +237,11 @@ export default function App() {
     }
   }
 
+  // now, we write the HTML to display the game
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Left side: word display and buttons */}
+        {/* left side for word display and buttons */}
         <View style={[styles.leftPanel, { width: leftWidth }]}>
           <Text style={styles.title}>{puzzleData.k}-PARTITE LETTER BOXED</Text>
 
@@ -225,9 +264,11 @@ export default function App() {
           </View>
         </View>
 
-        {/* Right side: polygon and letters */}
+        {/* right side for k-partite graph and letters */}
         <View style={[styles.rightPanel, { width: rightWidth }]}>
           <Svg width={rightWidth} height={windowHeight}>
+
+  {/* this tag displays the shape of the k-partite graph as a readable polygon */}
   <Polygon
     points={polygonPoints}
     fill="#ffffff"
@@ -237,6 +278,7 @@ export default function App() {
   />
 
 {completedPaths.map((path, wordIndex) =>
+  // loop and construct a path of previous completed words
   path.map((step, i) => {
     if (i === 0) return null;
 
@@ -253,6 +295,7 @@ export default function App() {
 
     if (!prev || !curr) return null;
 
+    // and display them as lines for each edge
     return (
       <Line
         key={`completed-${wordIndex}-${i}`}
@@ -271,6 +314,7 @@ export default function App() {
 
   {currentWord.length > 1 &&
     currentWord.map((letter, i) => {
+      // loop and construct a path for current word
       if (i === 0) return null;
 
       const prevLetter = currentWord[i - 1];
@@ -296,6 +340,7 @@ export default function App() {
 
       if (!prev || !curr) return null;
 
+      // and display a line between edges of current word
       return (
         <Line
           key={`line-${i}`}
@@ -311,13 +356,14 @@ export default function App() {
     })}
 </Svg>
 
-          {letters.map((item, idx) => {
+  {letters.map((item, idx) => {
   const isUsed = usedLetters.some(
     (used) =>
       used.sideIndex === item.sideIndex &&
       used.letterIndex === item.letterIndex
   );
 
+  // display the buttons for each letter (we've already calculated positions above)
   return (
     <Pressable
   key={idx}
@@ -349,6 +395,8 @@ export default function App() {
   );
 }
 
+// the rest of the file is for styles, no need for comments
+// the styles closely match the real styles of NYT's own game
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#faa6a4' },
   content: { flexDirection: 'row', flex: 1 },
@@ -358,7 +406,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rightPanel: {
-    position: 'relative', // important for absolute positioning inside
+    position: 'relative', 
     height: '100%',
   },
   title: { fontSize: 40, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
